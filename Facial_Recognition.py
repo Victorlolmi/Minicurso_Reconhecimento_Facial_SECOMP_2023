@@ -1,40 +1,38 @@
-import os
+
+# Reconhecimento Facial com DeepFace
+
+#1.1 Carregar o video
+
 import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-import tempfile
-from deepface import DeepFace
-import pickle
-from tqdm import tqdm
-import imageio
 
-'''
-img1 = "ReconhecimentoFacial\Past_Leon\img1.jpg"
-img2 = "ReconhecimentoFacial\Past_Leon\img2.jpg"
-folder_path = "ReconhecimentoFacial\Past_Leon"
-result = DeepFace.find(img1,folder_path, enforce_detection=False)
-
-print(result)
-
-'''
 # Carregue o vídeo do disco
-video_filename = "ReconhecimentoFacial/download/leon&nilce_curto.mp4"
+video_filename = "vids\leon&nilce_curto.mp4"
 video_capture_input = cv2.VideoCapture(video_filename)
 
-# Defina o nome a ser usado se nenhuma correspondência for encontrada
-unknown_name = "Desconhecido"
+#1.2 Criar video de saida
+
+import imageio
 
 # Defina o arquivo de vídeo de saída
 fps = int(video_capture_input.get(cv2.CAP_PROP_FPS))
-video_capture_output = imageio.get_writer("output.mp4", fps = fps)
+video_capture_output = imageio.get_writer("vids\output.mp4", fps = fps)
 
-#pasta do leon
+#1.3 De os caminhos para as imagens de referencia
 
-target_image_leon = "ReconhecimentoFacial\Past_Leon\img1.jpg"
-target_image_nilce= "ReconhecimentoFacial\Past_Nilce\img1.jpg"
+# Imagem do Leon
+target_image_leon = "imgs\img_Leon.jpg"
+# Imagem da Nilce
+target_image_nilce= "imgs\img_Nilce.jpg"
+
+#Utilizacao do DeepFace
+
+#2.1 Gerar reconhecimento facial para todos os frames 
+
+
+from deepface import DeepFace
+
 frame_counter = 0
 
-# Gere o reconhecimento em vídeo para todos os frames
 while True:
     # Para cada frame
     success, frame = video_capture_input.read()
@@ -42,7 +40,7 @@ while True:
 
     frame_counter += 1
 
-    print(frame_counter)
+    print("Frame: "+frame_counter)
     # Se o vídeo acabou, saia do loop
     if not success:
         break
@@ -83,34 +81,16 @@ while True:
         if h_nilce >= 150 and h_nilce <=  250:
 
             print("Nilce reconhecida")
-            print(w_nilce,h_nilce)
 
             cv2.rectangle(frame, (x_nilce, y_nilce), (x_nilce + w_nilce, y_nilce + h_nilce), (0, 255, 0), 4)
             cv2.putText(frame, recognized_name, (x_nilce, y_nilce - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
         
-    
-    '''
-    if detected_face_leon['verified'] == False and detected_face_nilce['verified'] == False:
-
-        detected_face = DeepFace.verify(frame, , enforce_detection=False)
-
-        (x, y, w, h) = (int(detected_face['region']['x']), int(detected_face['region']['y']), int(detected_face['region']['w']), int(detected_face['region']['h']))
-
-        recognized_name = unknown_name
-        print("Dexconhecido")
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 4)
-        cv2.putText(frame, recognized_name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-    '''
-        
     # Escreva o frame no arquivo de vídeo de saída
     
     video_capture_output.append_data(frame)
 
-    print("salvando")
-    
+#2.2 Libere os objetos de captura e gravacao de video
 
-# Libere os objetos de captura e gravação de vídeo
 video_capture_input.release()
 video_capture_output.close()
-
