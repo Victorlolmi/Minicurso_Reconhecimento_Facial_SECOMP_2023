@@ -1,4 +1,5 @@
 #1.1 Criar Função "Gerar pastas com faces" 
+#pip install opencv-python deepface matplotlib imageio
 
 import os
 import cv2
