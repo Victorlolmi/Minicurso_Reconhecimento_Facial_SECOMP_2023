@@ -4,7 +4,7 @@
 import os
 import cv2
 from deepface import DeepFace
-
+print("1")
 def generateFolderWithFaces(output_folder, video_path, target_image_path):
                 #(Pasta onde vai ser salvo, caminho de video, Imagem de referência)
 
@@ -91,7 +91,7 @@ folder_name = 'imgs\Folder_leon'
 
 # Chamada da Função
 Leon_faces = generateFolderWithFaces(folder_name, video_path, foto_path)
-
+print("2")
 #1.3 Adicionar caminhos para Nilce
 
 # Caminho para o vídeo de entrada
@@ -108,7 +108,7 @@ Nilce_faces = generateFolderWithFaces(folder_name, video_path, foto_path)
 #2.1 Função de mostrar Imagnes utiizando a matplotlib
 
 import matplotlib.pyplot as plt
-
+print("3")
 def display_images(image_folder, num_images=5):
 
     # Lista de nomes de arquivo das imagens na pasta
