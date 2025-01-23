@@ -6,7 +6,7 @@
 import cv2
 
 # Carregue o vídeo do disco
-video_filename = "vids\leon&nilce_curto.mp4"
+video_filename = "vids\leoneNilce20s.mp4"
 video_capture_input = cv2.VideoCapture(video_filename)
 
 #1.2 Criar video de saida
@@ -22,37 +22,46 @@ video_capture_output = imageio.get_writer("vids\output.mp4", fps = fps)
 # Imagem do Leon
 target_image_leon = "imgs\img_Leon.jpg"
 # Imagem da Nilce
-target_image_nilce= "imgs\img_Nilce.jpg"
+target_image_nilce= "imgs\img_Nilce.PNG"
 
 #Utilizacao do DeepFace
 
 #2.1 Gerar reconhecimento facial para todos os frames 
 
-
 from deepface import DeepFace
 
+(x_leon, y_leon, w_leon, h_leon) = (0,0,0,0)
+(x_nilce, y_nilce, w_nilce, h_nilce) = (0,0,0,0)
 frame_counter = 0
 
 while True:
     # Para cada frame
     success, frame = video_capture_input.read()
-
+ 
 
     frame_counter += 1
-
-    print("Frame: "+frame_counter)
+    
+    print("Frame: "+ str(frame_counter))
     # Se o vídeo acabou, saia do loop
     if not success:
         break
 
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-    '''
+    frame =    cv2.resize(frame, (frame.shape[1] // 2, frame.shape[0] // 2))
+    
     # "Pula" alguns frames
-    if frame_counter % 2 != 0:
+    if frame_counter % 10 != 0:
+        recognized_name = "Leon"
+
+        cv2.rectangle(frame, (x_leon, y_leon), (x_leon + w_leon, y_leon + h_leon), (0, 255, 0), 4)
+        cv2.putText(frame, recognized_name, (x_leon, y_leon - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        recognized_name = "Nilce"
+        cv2.rectangle(frame, (x_nilce, y_nilce), (x_nilce + w_nilce, y_nilce + h_nilce), (0, 255, 0), 4)
+        cv2.putText(frame, recognized_name, (x_nilce, y_nilce - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
+        video_capture_output.append_data(frame)
+
         continue
-    '''
-   
     
     # Detecte as faces do leon no frame 
     detected_face_leon = DeepFace.verify(frame, target_image_leon, "VGG-Face",enforce_detection=False)
@@ -78,12 +87,10 @@ while True:
 
         recognized_name = "Nilce"
 
-        if h_nilce >= 150 and h_nilce <=  250:
+        print("Nilce reconhecida")
 
-            print("Nilce reconhecida")
-
-            cv2.rectangle(frame, (x_nilce, y_nilce), (x_nilce + w_nilce, y_nilce + h_nilce), (0, 255, 0), 4)
-            cv2.putText(frame, recognized_name, (x_nilce, y_nilce - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.rectangle(frame, (x_nilce, y_nilce), (x_nilce + w_nilce, y_nilce + h_nilce), (0, 255, 0), 4)
+        cv2.putText(frame, recognized_name, (x_nilce, y_nilce - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
         
     # Escreva o frame no arquivo de vídeo de saída
